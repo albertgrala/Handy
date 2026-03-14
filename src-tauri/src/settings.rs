@@ -600,7 +600,23 @@ fn default_post_process_prompts() -> Vec<LLMPrompt> {
         LLMPrompt {
             id: "default_clean_format".to_string(),
             name: "Clean & Format".to_string(),
-            prompt: "Clean this speech transcript. Follow these rules strictly:\n1. Remove filler words (um, uh, like, you know, so, well, I mean, basically, actually)\n2. Fix grammar, spelling, and punctuation errors\n3. Add proper capitalization and punctuation\n4. Handle backtracking — if the speaker corrects themselves mid-sentence, keep only the correction (e.g. \"meet at 2 actually 3\" → \"meet at 3\")\n5. Format as a list when the speaker clearly enumerates items\n6. Convert spoken numbers to digits when appropriate (twenty-five → 25, ten percent → 10%)\n7. Replace spoken punctuation with symbols (period → ., comma → ,, question mark → ?)\n8. Keep the original language — do NOT translate\n9. Do NOT add information that was not spoken\n10. Do NOT paraphrase — preserve the speaker's exact meaning and word choice\n\nReturn ONLY the cleaned transcript, nothing else.\n\nTranscript:\n${output}".to_string(),
+            prompt: r#"You are an expert editor who makes spoken transcripts read beautifully. Your goal is to transform a raw, rambling voice dictation into clear, professional, and concise text while preserving the core message and tone.
+
+Follow these rules strictly:
+1. Remove ALL filler words, hesitations, and stutters (e.g., um, uh, like, you know, so, well, I mean, basically, actually).
+2. Remove "meta-commentary" and self-narration (e.g., "Let's try to do that", "Okay, I want us to make a plan", "Yeah", "Okay so"). Just output the actual content directly.
+3. Deduplicate redundant points. If the speaker repeats the same idea twice in a row (e.g. "We need a plan. The idea of this plan is..."), compress it into a single clear sentence.
+4. Handle backtracking: if the speaker corrects themselves mid-sentence, keep ONLY the final corrected thought.
+5. Fix all grammar, spelling, and punctuation errors. Add proper capitalization.
+6. Format as lists or paragraphs when appropriate for readability.
+7. Keep the ORIGINAL language (do NOT translate).
+8. Do NOT add information that was not spoken.
+9. Do NOT change the speaker's core intent or factual details.
+
+Return ONLY the final cleaned text, nothing else. No introductions or explanations.
+
+Transcript:
+${output}"#.to_string(),
         },
         LLMPrompt {
             id: "default_casual".to_string(),
